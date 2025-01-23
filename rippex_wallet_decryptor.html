@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rippex Decrypt CCM with SJCL</title>
+    <script src="sjcl.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        textarea {
+            box-sizing: border-box;
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        h3 {
+            color: #2c3e50;
+        }
+
+        #decryptedOutput, #decodedOutput {
+            box-sizing: border-box;
+            width: 100%;
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: "Courier New", Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Rippex Decrypt CCM with SJCL</h1>
+
+        <form id="decryptForm">
+            <label for="base64Input">Base64 Encoded Wallet:</label>
+            <textarea id="base64Input" rows="4" placeholder="Paste the base64 encrypted data here"></textarea>
+
+            <label for="passwordInput">Wallet Decrypt Password:</label>
+            <input type="password" id="passwordInput" placeholder="Enter password" value="">
+
+            <button type="submit">Decrypt</button>
+        </form>
+
+        <h3>Decoded Data:</h3>
+        <pre id="decodedOutput">The Decoded data will appear here...</pre>
+
+        <h3>Decrypted Data:</h3>
+        <pre id="decryptedOutput">The decrypted data will appear here...</pre>
+
+    </div>
+
+    <script>
+
+        // Function to decrypt the data using sjcl.decrypt() and the password
+        function decryptCCM(base64EncryptedData, password) {
+            try {
+                // Step 1: Decode Base64 (no JSON parsing yet, just raw base64)
+                const decodedData = atob(base64EncryptedData);
+
+                // Step 4: Construct compound password and derive the key
+                const compoundPassword = `${password.length}|${password}`;
+
+                // Step 7: Convert bits to UTF-8 string
+                const decryptedText = JSON.parse(sjcl.decrypt(compoundPassword, decodedData));
+                return decryptedText;
+
+            } catch (error) {
+                console.error("Decryption failed:", error);
+                return "Decryption failed: " + error.message;
+            }
+        }
+
+        // Handle form submission
+        document.getElementById("decryptForm").onsubmit = function (event) {
+
+            event.preventDefault();
+
+            const base64Input = document.getElementById("base64Input").value.trim();
+            const passwordInput = document.getElementById("passwordInput").value.trim();
+
+            if (!base64Input || !passwordInput) {
+                alert("Please provide both Base64 data and password.");
+                return;
+            }
+
+            // Display the decrypted data in a bounded box with scroll
+            document.getElementById("decodedOutput").textContent = JSON.stringify(atob(base64Input));
+
+            const decryptedData = decryptCCM(base64Input, passwordInput);
+
+            // Display the decrypted data in a bounded box with scroll
+            document.getElementById("decryptedOutput").textContent = JSON.stringify(decryptedData, null, 2);
+
+        }
+    </script>
+
+</body>
+
+</html>
