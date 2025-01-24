@@ -29,7 +29,7 @@ With your private key in hand, you can interact with the modern XRP Ledger using
 6. Enter your decryption password.
 7. Click the Decrypt button.
 8. **If** your password is correct, the page will decrypt your wallet file and reveal it's contents.
-7. Securly record your decrypted private key (also referred to as a Secret Key).
+7. Securly record your decrypted master key (also referred to as a Secret Key).
 8. Use this private key to access your XRP funds using the xrpl library.
 
 ### Python xrpl scrips usage
@@ -56,13 +56,13 @@ Note: *You can do all of this on the same online machine but I don't recommend i
 
 This script signes the XRPL transaction created by ```xrpl_probe.py```, it has been designed to be used OFFLINE as you have to enter your private key.
 
-Copy your probe .json file to an offline machine (via USB) and run the following (example) command replacing your filename with the probe file example below:
+Copy your probe .json file to an offline machine (via USB for example) and run the following (example) command replacing your filename with the probe file example below:
 
 ```python3 sign_xrpl_payment.py address_probes/rsZ3b_probe_2025-01-22_17-16-55.json -algorithm Ed25519```
 
 Note: *If you get an error complaining about the algorithm selected you might want to try using ```SECP256K1``` opposed to ```Ed25519``` dependant on when and in what patch state your system was in when you generated the original wallet file.*
 
-You will be asked to enter your Mater Key (found by using the Rippex Wallet Decryptor web tool) at which point a bunch of checks will be made and you will be asked to confirm the signing operation if everything looks good.
+You will be asked to enter your Master Key (found by using the Rippex Wallet Decryptor web tool) at which point a bunch of checks will be made and you will be asked to confirm the signing operation if everything looks good.
 
 If everything is correct enter 'yes' and the script will create you a new file in the ```signed_transactions``` directory that can then be USB copied safely back to your ONLINE machine for transmission to XRPL network.
 
